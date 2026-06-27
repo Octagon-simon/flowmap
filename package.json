@@ -1,0 +1,30 @@
+{
+  "name": "flowmap",
+  "version": "0.1.0",
+  "description": "Map each interactive control in a React/JSX component to the outcome its handler produces (toast / redirect / modal), via the AST. Built for grounding LLM-generated end-to-end tests.",
+  "type": "module",
+  "main": "flowmap.ts",
+  "types": "flowmap.ts",
+  "scripts": {
+    "demo": "tsx demo.mts"
+  },
+  "keywords": [
+    "ast",
+    "react",
+    "jsx",
+    "tsx",
+    "playwright",
+    "e2e",
+    "test-generation",
+    "llm",
+    "typescript",
+    "static-analysis"
+  ],
+  "peerDependencies": {
+    "typescript": ">=4.7"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^26.0.1"
+  }
+}
