@@ -1,4 +1,4 @@
-// Runnable demo: `npx tsx demo.mts` (or compile + run with node).
+// Runnable demo: `npx tsx demo.mts`.
 // Shows FlowMap resolving control → outcome on a representative component with multiple buttons —
 // the case where grep-the-file approaches misattribute outcomes.
 
@@ -47,16 +47,22 @@ for (const a of map) {
   if (a.outcomes.opensModal) out.push('opensModal')
   console.log(
     `[${a.by}] ${JSON.stringify(a.control)} → ${a.handler}${a.external ? ' (external)' : ''}` +
-      (out.length ? `  ⇒ ${out.join(', ')}` : '') +
-      (a.calls.length ? `   calls: ${a.calls.join(', ')}` : ''),
+    (a.resolvedFrom ? ` «${a.resolvedFrom.split('/').slice(-1)[0]}»` : '') +
+    (out.length ? `  ⇒ ${out.join(', ')}` : '') +
+    (a.calls.length ? `   calls: ${a.calls.join(', ')}` : ''),
   )
 }
 
-// Expected output — note that the "/upgrade" outcome is attributed ONLY to "Upgrade to Pro",
-// and "Menu item saved!" ONLY to Save. "Add Item" resolves to a prop (external) so it gets NO
-// invented outcome. Visible text wins over aria-label, so the last button is located by "Logout":
+// Expected output — the "/upgrade" outcome is attributed ONLY to "Upgrade to Pro", and
+// "Menu item saved!" ONLY to Save. "Add Item" is a component PROP (its body lives in the caller),
+// so it stays external with no invented outcome. Visible text wins over aria-label ("Logout"):
 //
 // [text]  "Upgrade to Pro" → handleUpgrade  ⇒ redirect=/upgrade, toast[info]="Redirecting to upgrade page..."
 // [testid] "save-item"     → handleSave     ⇒ toast[success]="Menu item saved!"   calls: menuService.create
 // [text]  "Add Item"       → onAddItem (external)
 // [text]  "Logout"         → handleLogout   calls: signOut
+//
+// Pass the entry file's absolute path as a 3rd arg — buildFlowMap(src, cwd, fileAbs) — to enable
+// ONE-HOP cross-file resolution: a handler imported from a file, or destructured from a custom hook
+// (`const { handleSave } = useMenuActions()`), is followed into that file and its outcome extracted
+// there (reported with `resolvedFrom`). Without the path, resolution is single-file (as above).
